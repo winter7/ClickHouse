@@ -191,13 +191,13 @@ protected:
 
             if constexpr (has_mapped)
             {
-                cache.value.first = keyHolderGetKey(key_holder);
+                cache.value.first = Data::getKeyByMapped(it);
                 cache.value.second = *it;
                 cached = &cache.value.second;
             }
             else
             {
-                cache.value = keyHolderGetKey(key_holder);
+                cache.value = Data::getKeyByMapped(it);
             }
         }
 

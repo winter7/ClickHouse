@@ -256,6 +256,11 @@ public:
         it = impl_it;
     }
 
+    static Key getKeyByMapped(MappedPtr mapped)
+    {
+        return Cell::getCellByMapped(mapped)->getKey();
+    }
+
     MappedPtr ALWAYS_INLINE find(Key x, size_t hash_value)
     {
         size_t buck = getBucketFromHash(hash_value);

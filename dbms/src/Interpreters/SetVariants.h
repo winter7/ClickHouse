@@ -22,7 +22,7 @@ namespace DB
 
 
 /// For the case where there is one numeric key.
-template <typename FieldType, typename TData>    /// UInt8/16/32/64 for any types with corresponding bit width.
+template <typename FieldType, typename TData, bool use_cache = true>    /// UInt8/16/32/64 for any types with corresponding bit width.
 struct SetMethodOneNumber
 {
     using Data = TData;
@@ -30,7 +30,7 @@ struct SetMethodOneNumber
 
     Data data;
 
-    using State = ColumnsHashing::HashMethodOneNumber<typename Data::value_type, void, FieldType>;
+    using State = ColumnsHashing::HashMethodOneNumber<typename Data::value_type, void, FieldType, use_cache>;
 };
 
 /// For the case where there is one string key.
@@ -183,8 +183,8 @@ struct SetMethodHashed
   */
 struct NonClearableSet
 {
-    std::unique_ptr<SetMethodOneNumber<UInt8, FixedHashSet<UInt8>>>                                             key8;
-    std::unique_ptr<SetMethodOneNumber<UInt16, FixedHashSet<UInt16>>>                                           key16;
+    std::unique_ptr<SetMethodOneNumber<UInt8, FixedHashSet<UInt8>, false>>                                             key8;
+    std::unique_ptr<SetMethodOneNumber<UInt16, FixedHashSet<UInt16>, false>>                                           key16;
 
     /** Also for the experiment was tested the ability to use SmallSet,
       *  as long as the number of elements in the set is small (and, if necessary, converted to a full-fledged HashSet).
@@ -209,8 +209,8 @@ struct NonClearableSet
 
 struct ClearableSet
 {
-    std::unique_ptr<SetMethodOneNumber<UInt8, FixedClearableHashSet<UInt8>>>                                        key8;
-    std::unique_ptr<SetMethodOneNumber<UInt16, FixedClearableHashSet<UInt16>>>                                      key16;
+    std::unique_ptr<SetMethodOneNumber<UInt8, FixedClearableHashSet<UInt8>, false>>                                        key8;
+    std::unique_ptr<SetMethodOneNumber<UInt16, FixedClearableHashSet<UInt16>, false>>                                      key16;
 
     std::unique_ptr<SetMethodOneNumber<UInt32, ClearableHashSet<UInt32, HashCRC32<UInt32>>>>                        key32;
     std::unique_ptr<SetMethodOneNumber<UInt64, ClearableHashSet<UInt64, HashCRC32<UInt64>>>>                        key64;

@@ -103,6 +103,7 @@ struct HashTableCell
     const value_type & getValue() const { return key; }
 
     /// Get the key.
+    Key getKey() const { return key; }
     static const Key & getKey(const value_type & value) { return value; }
 
     /// Are the keys at the cells equal?
@@ -134,6 +135,10 @@ struct HashTableCell
     bool isDeleted() const { return false; }
 
     void * getMapped() { return this; }
+    static HashTableCell * getCellByMapped(void * mapped)
+    {
+        return reinterpret_cast<HashTableCell *>(mapped);
+    }
 
     /// Serialization, in binary and text form.
     void write(DB::WriteBuffer & wb) const         { DB::writeBinary(key, wb); }
@@ -786,6 +791,11 @@ public:
         const auto & key = keyHolderGetKey(key_holder);
         if (!emplaceIfZero(key, it, inserted, hash_value))
             emplaceNonZero(key_holder, it, inserted, hash_value);
+    }
+
+    static Key getKeyByMapped(MappedPtr mapped)
+    {
+        return Cell::getCellByMapped(mapped)->getKey();
     }
 
     /// Copy the cell from another hash table. It is assumed that the cell is not zero, and also that there was no such key in the table yet.

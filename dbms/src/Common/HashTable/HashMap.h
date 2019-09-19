@@ -56,6 +56,7 @@ struct HashMapCell
 
     const value_type & getValue() const { return value; }
 
+    Key getKey() const { return value.first; }
     static const Key & getKey(const value_type & value) { return value.first; }
 
     bool keyEquals(const Key & key_) const { return value.first == key_; }
@@ -79,6 +80,11 @@ struct HashMapCell
 
     mapped_type * getMapped() { return &value.second; }
     const mapped_type * getMapped() const { return &value.second; }
+    static HashMapCell * getCellByMapped(mapped_type * mapped)
+    {
+        static constexpr auto offset = offsetof(HashMapCell, value) + offsetof(value_type, second);
+        return reinterpret_cast<HashMapCell *>(reinterpret_cast<char *>(mapped) - offset);
+    }
 
     /// Serialization, in binary and text form.
     void write(DB::WriteBuffer & wb) const
